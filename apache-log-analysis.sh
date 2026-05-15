@@ -18,6 +18,7 @@ banner()
 	echo "4) Suspicious User-agents: 4"
 	echo "5) Access to Sensitive Files: 5"
 	echo "6) Potential Brute-Force Attacks: 6"
+	echo "7) First and Last Access by  malicious IP: 7"
 }
 
 banner2()
@@ -66,6 +67,16 @@ case "${1}" in
 	# Shows the IPs that generated the most 404 REQ. This may indicate brute force attacks on non-existent directories.
 	echo "Detect potential Brute-Force attacks ${log_file_path}..."
 	grep " 404 " "${log_file_path}" | cut -d " " -f 1 | sort | uniq -c | sort -nr | head
+	;;
+    "7")
+	# First and Last Access by  malicious IP
+	echo "First and Last Access by  malicious IP ${log_file_path}..."
+	echo "First Access IP:"
+	head -n1 "${log_file_path}" | cut -d " " -f 1
+	tail -n1 "${log_file_path}"
+	echo  "Last Access IP:"
+	tail -n1 "${log_file_path}" | cut -d " " -f 1
+	tail -n1 "${log_file_path}"
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
