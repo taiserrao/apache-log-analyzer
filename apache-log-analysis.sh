@@ -19,6 +19,7 @@ banner()
 	echo "5) Access to Sensitive Files: 5"
 	echo "6) Potential Brute-Force Attacks: 6"
 	echo "7) First and Last Access by  malicious IP: 7"
+	echo "8) Find User-Agents used by malicious IP: 8"
 }
 
 banner2()
@@ -72,11 +73,16 @@ case "${1}" in
 	# First and Last Access by  malicious IP
 	echo "First and Last Access by  malicious IP ${log_file_path}..."
 	echo "First Access IP:"
-	head -n1 "${log_file_path}" | cut -d " " -f 1
-	tail -n1 "${log_file_path}"
-	echo  "Last Access IP:"
-	tail -n1 "${log_file_path}" | cut -d " " -f 1
-	tail -n1 "${log_file_path}"
+        head -n 1 "${log_file_path}" | awk '{print $1}'
+        head -n 1 "${log_file_path}"
+        echo "Last Access IP:"
+        tail -n 1 "${log_file_path}" | awk '{print $1}'
+        tail -n 1 "${log_file_path}"
+	;;
+    "8")
+	# Extract and count all unique IP addresses and their User-Agents.
+	echo "Find User-Agents used by a malicious IP"
+	awk -F'"' '{split($1, ip, " "); print ip[1] " " $6}' "${log_file_path}" | sort | uniq -c | sort -nr
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
