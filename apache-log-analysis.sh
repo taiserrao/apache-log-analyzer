@@ -43,8 +43,13 @@ case "${1}" in
 	echo "Detecting SQL Injection ${log_file_path}..."
 	grep -iE "%22|%27" "${log_file_path}" | grep -iE "union|select|insert|drop|truncate"
 	;;
+    "3")
+	# Directory Transversal also known as Path Traversal.
+	echo "Detecting Directory Transversal ${log_file_path}..."
+	grep -iE "\.\./|\.\.%2f|%2e%2e%2f|%2e%2e/" "${log_file_path}"
+	;;
     *)
-	# Cath-all: Anything else that's not on the list.
+	# Catch-all: Anything else that's not on the list.
 	echo "Invalid option. Please choose between options 1 to 10."
 	banner
 	banner2
