@@ -14,6 +14,7 @@ banner()
 	echo ">>Detection Options:"
 	echo "1) Potential XSS (Cross-Site Scripting) Attacks: 1"
 	echo "2) SQL Injection Attacks: 2"
+	echo "3) Directory Traversal (Path Traversal): 3"
 }
 
 banner2()
@@ -44,8 +45,8 @@ case "${1}" in
 	grep -iE "%22|%27" "${log_file_path}" | grep -iE "union|select|insert|drop|truncate"
 	;;
     "3")
-	# Directory Transversal also known as Path Traversal.
-	echo "Detecting Directory Transversal ${log_file_path}..."
+	# Directory Traversal also known as Path Traversal.
+	echo "Detecting Directory Traversal ${log_file_path}..."
 	grep -iE "\.\./|\.\.%2f|%2e%2e%2f|%2e%2e/" "${log_file_path}"
 	;;
     *)
