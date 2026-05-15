@@ -15,6 +15,7 @@ banner()
 	echo "1) Potential XSS (Cross-Site Scripting) Attacks: 1"
 	echo "2) SQL Injection Attacks: 2"
 	echo "3) Directory Traversal (Path Traversal): 3"
+	echo "4) Suspicious User-agents: 4"
 }
 
 banner2()
@@ -48,6 +49,11 @@ case "${1}" in
 	# Directory Traversal also known as Path Traversal.
 	echo "Detecting Directory Traversal ${log_file_path}..."
 	grep -iE "\.\./|\.\.%2f|%2e%2e%2f|%2e%2e/" "${log_file_path}"
+	;;
+    "4")
+	# Detects possible scanner attacks using default tools (Suspicious User-Agents).
+	echo "Detecting Scanners Attacks ${log_file_path}..."
+	grep -iE "nikto|nmap|sqlmap|acunetix|curl|masscan|python" "${log_file_path}"
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
