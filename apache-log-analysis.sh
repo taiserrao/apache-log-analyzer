@@ -16,7 +16,8 @@ banner()
 	echo "2) SQL Injection Attacks: 2"
 	echo "3) Directory Traversal (Path Traversal): 3"
 	echo "4) Suspicious User-agents: 4"
-	echo "5) Access to sensitive files: 5"
+	echo "5) Access to Sensitive Files: 5"
+	echo "6) Potential Brute-Force Attacks: 6"
 }
 
 banner2()
@@ -60,6 +61,11 @@ case "${1}" in
 	# Detects access to sensitive files (.env, .git and anothers)
 	echo "Identify access to sensitive files (.env, .git,...) ${log_file_path}..."
 	grep -iE "\.env|\.git|\.htaccess|\.bak" "${log_file_path}"
+	;;
+    "6")
+	# Shows the IPs that generated the most 404 REQ. This may indicate brute force attacks on non-existent directories.
+	echo "Detect potential Brute-Force attacks ${log_file_path}..."
+	grep " 404 " "${log_file_path}" | cut -d " " -f 1 | sort | uniq -c | sort -nr | head
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
