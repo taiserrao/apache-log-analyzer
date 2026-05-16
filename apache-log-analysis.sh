@@ -20,6 +20,7 @@ banner()
 	echo "6) Potential Brute-Force Attacks: 6"
 	echo "7) First and Last Access by  malicious IP: 7"
 	echo "8) Find User-Agents used by malicious IP: 8"
+	echo "9) List IP check  RQE"
 }
 
 banner2()
@@ -41,37 +42,37 @@ fi
 case "${1}" in
     "1")
 	# XSS attacks detection using URL Encoding (%3C)
-        echo "Detecting potential XSS attacks ${log_file_path}..."
+        echo "Detecting potential XSS attacks >> ${log_file_path}..."
 	grep -iE "<script|%3Cscript" "${log_file_path}"
         ;;
     "2")
         # SQL injection detection with URL Encoding (%22/%27) and SQL keywords to prevent false positives.
-	echo "Detecting SQL Injection ${log_file_path}..."
+	echo "Detecting SQL Injection >> ${log_file_path}..."
 	grep -iE "%22|%27" "${log_file_path}" | grep -iE "union|select|insert|drop|truncate"
 	;;
     "3")
 	# Directory Traversal also known as Path Traversal.
-	echo "Detecting Directory Traversal ${log_file_path}..."
+	echo "Detecting Directory Traversal >> ${log_file_path}..."
 	grep -iE "\.\./|\.\.%2f|%2e%2e%2f|%2e%2e/" "${log_file_path}"
 	;;
     "4")
 	# Detects possible scanner attacks using default tools (Suspicious User-Agents).
-	echo "Detecting Scanners Attacks ${log_file_path}..."
+	echo "Detecting Scanners Attacks >> ${log_file_path}..."
 	grep -iE "nikto|nmap|sqlmap|acunetix|curl|masscan|python" "${log_file_path}"
 	;;
     "5")
 	# Detects access to sensitive files (.env, .git and anothers)
-	echo "Identify access to sensitive files (.env, .git,...) ${log_file_path}..."
+	echo "Identify access to sensitive files (.env, .git,...) >> ${log_file_path}..."
 	grep -iE "\.env|\.git|\.htaccess|\.bak" "${log_file_path}"
 	;;
     "6")
 	# Shows the IPs that generated the most 404 REQ. This may indicate brute force attacks on non-existent directories.
-	echo "Detect potential Brute-Force attacks ${log_file_path}..."
+	echo "Detect potential Brute-Force attacks >> ${log_file_path}..."
 	grep " 404 " "${log_file_path}" | cut -d " " -f 1 | sort | uniq -c | sort -nr | head
 	;;
     "7")
 	# First and Last Access by  malicious IP
-	echo "First and Last Access by  malicious IP ${log_file_path}..."
+	echo "First and Last Access by  malicious IP >> ${log_file_path}..."
 	echo "First Access IP:"
         head -n 1 "${log_file_path}" | awk '{print $1}'
         head -n 1 "${log_file_path}"
@@ -81,8 +82,13 @@ case "${1}" in
 	;;
     "8")
 	# Extract and count all unique IP addresses and their User-Agents.
-	echo "Find User-Agents used by a malicious IP"
+	echo "Find User-Agents used by a malicious IP >> ${log_file_path}..."
 	awk -F'"' '{split($1, ip, " "); print ip[1] " " $6}' "${log_file_path}" | sort | uniq -c | sort -nr
+	;;
+    "9")
+	# Extracts and groups IP addresses by their HTTP request methods, counting the total RQE.
+	echo "List IP addresses, Request Methods and count RQE >> ${log_file_path}..."
+	awk -F'"' '{split($1, ip, " "); split($2, req, " "); print ip[1] " | " req[1]}' "${log_file_path}" | sort | uniq -c | sort -nr
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
