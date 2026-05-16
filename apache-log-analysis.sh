@@ -20,7 +20,8 @@ banner()
 	echo "6) Potential Brute-Force Attacks: 6"
 	echo "7) First and Last Access by  malicious IP: 7"
 	echo "8) Find User-Agents used by malicious IP: 8"
-	echo "9) List IP check  RQE"
+	echo "9) List IP check  RQE: 9"
+	echo "10) Locate access to a specific sensitive file: 10"
 }
 
 banner2()
@@ -89,6 +90,21 @@ case "${1}" in
 	# Extracts and groups IP addresses by their HTTP request methods, counting the total RQE.
 	echo "List IP addresses, Request Methods and count RQE >> ${log_file_path}..."
 	awk -F'"' '{split($1, ip, " "); split($2, req, " "); print ip[1] " | " req[1]}' "${log_file_path}" | sort | uniq -c | sort -nr
+	;;
+    "10")
+	# Identifies sensitive files that have been accessed and searches for one of them when the sensitive file name is typed.
+	echo "Locate access to a specific sensitive file >> ${log_file_path}..."
+	echo ""
+	echo "The following sensitive files were targeted:"
+	grep -o -E "\.env|/etc/passwd|/etc/shadow|\.git|wp-config\.php|win\.ini|boot\.ini|id_rsa" "${log_file_path}" | sort | uniq
+
+	echo ""
+	read -p "Enter a filename to view attack details: " sensitive_file
+	echo ""
+
+	echo "Attack Details >> ${sensitive_file}:"
+	echo ""
+        grep -F --color=always "${sensitive_file}" "${log_file_path}"
 	;;
     *)
 	# Catch-all: Anything else that's not on the list.
