@@ -39,6 +39,11 @@ if [ -z "${1}" ]; then
 	exit
 fi
 
+if [ -z "${log_file_path}" ]; then
+	echo "ERROR: Missing Log File Path!"
+        exit
+fi
+
 # Case structure for the options.
 case "${1}" in
     "1")
